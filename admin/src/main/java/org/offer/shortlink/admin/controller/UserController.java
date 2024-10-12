@@ -1,6 +1,8 @@
 package org.offer.shortlink.admin.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.offer.shortlink.admin.common.convention.result.Result;
+import org.offer.shortlink.admin.common.convention.result.Results;
 import org.offer.shortlink.admin.dto.resp.UserRespDTO;
 import org.offer.shortlink.admin.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +23,8 @@ public class UserController {
      * 根据用户名查询用户信息
      */
     @GetMapping("api/link/v1/user/{username}")
-    public UserRespDTO getUserByUsername(@PathVariable("username") String username) {
-
-        return userService.getUserByUsername(username);
+    public Result<UserRespDTO> getUserByUsername(@PathVariable("username") String username) {
+        UserRespDTO result = userService.getUserByUsername(username);
+        return Results.success(result);
     }
 }
