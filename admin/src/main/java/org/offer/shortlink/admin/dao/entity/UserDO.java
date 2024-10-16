@@ -1,10 +1,10 @@
 package org.offer.shortlink.admin.dao.entity;
 
-
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+
 import java.util.Date;
 
 /**
@@ -67,4 +67,3 @@ public class UserDO {
     @TableField(fill = FieldFill.INSERT)
     private Integer delFlag;
 }
-
