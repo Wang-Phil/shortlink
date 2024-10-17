@@ -1,13 +1,13 @@
 package org.offer.shortlink.admin.common.biz.user;
 
-import cn.hutool.core.util.StrUtil;
-import jakarta.servlet.Filter;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
+import com.alibaba.fastjson2.JSON;
+import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import org.springframework.data.redis.core.StringRedisTemplate;
+
+import java.io.IOException;
+import java.util.Objects;
 
 /**
  * 用户信息传输过滤器
@@ -15,16 +15,20 @@ import lombok.SneakyThrows;
 @RequiredArgsConstructor
 public class UserTransmitFilter implements Filter {
 
-    @SneakyThrows
+    private final StringRedisTemplate stringRedisTemplate;
+
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-        String username = httpServletRequest.getHeader("username");
-        if (StrUtil.isNotBlank(username)) {
-            String userId = httpServletRequest.getHeader("userId");
-            String realName = httpServletRequest.getHeader("realName");
-            UserInfoDTO userInfoDTO = new UserInfoDTO(userId, username, realName);
-            UserContext.setUser(userInfoDTO);
+        String requestURI = httpServletRequest.getRequestURI();
+        if (!Objects.equals(requestURI, "/api/short-link/v1/user/login")) {
+            String username = httpServletRequest.getHeader("username");
+            String token = httpServletRequest.getHeader("token");
+            Object userInfoJsonStr = stringRedisTemplate.opsForHash().get("login_" + username, token);
+            if (userInfoJsonStr != null) {
+                UserInfoDTO userInfoDTO = JSON.parseObject(userInfoJsonStr.toString(), UserInfoDTO.class);
+                UserContext.setUser(userInfoDTO);
+            }
         }
         try {
             filterChain.doFilter(servletRequest, servletResponse);
