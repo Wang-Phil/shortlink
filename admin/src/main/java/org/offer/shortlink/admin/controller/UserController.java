@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.offer.shortlink.admin.common.convention.result.Result;
 import org.offer.shortlink.admin.common.convention.result.Results;
 import org.offer.shortlink.admin.dto.req.UserRegisterReqDTO;
+import org.offer.shortlink.admin.dto.req.UserUpdateReqDTO;
 import org.offer.shortlink.admin.dto.resp.UserActualRespDTO;
 import org.offer.shortlink.admin.dto.resp.UserRespDTO;
 import org.offer.shortlink.admin.service.UserService;
@@ -49,6 +50,16 @@ public class UserController {
     @PostMapping("/api/short-link/v1/user")
     public Result<Void> register(@RequestBody UserRegisterReqDTO requestParam) {
         userService.register(requestParam);
+        return Results.success();
+    }
+
+
+    /**
+     * 修改用户
+     */
+    @PutMapping("/api/short-link/v1/user")
+    public Result<Void> update(@RequestBody UserUpdateReqDTO requestParam) {
+        userService.update(requestParam);
         return Results.success();
     }
 }
